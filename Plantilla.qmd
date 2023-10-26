@@ -209,6 +209,22 @@ Cabe destacar que al momento de hacer este analisis el valor otorgaba 2.77, este
 
 El metodo de Montecarlo es un metodo de valorizacion de acciones el cual a diferencia del modelo Black Scholes, este genera escenarios aleatorios con un random del precio del activo subyasente (S) y calcula el valor de la opcion a traves del promedio de todos los escenarios simulados. Este metodo es bastante utilizado, ejemplo de este es el paper de Salazar y Peñaloza quienes intentan valorizar acciones pertenecientes al indice COLCAP, el cual es el simil del IPSA de Colombia.
 
+La formula es la siguiente
+
+![](photos/fotos/Captura de pantalla 2023-10-26 155340.png){width="501"}
+
+Donde los parametros son los siguientes:
+
+S: Precio del activo subyacente
+
+K: Strike
+
+T: precio hasta el vencimiento de la opcion
+
+r: tasa libre de riesgo
+
+N: numero de trayectorias generadas
+
 Link paper: [https://ciencia.lasalle.edu.co/finanzas_comercio/256/](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fciencia.lasalle.edu.co%2Ffinanzas_comercio%2F256%2F)
 
 ### Aplicacion modelo adicional
@@ -267,4 +283,4 @@ Se eligen uno de los siguientes casos con tal de replicar y responder sus pregun
 
 -   Caso Administración de Efectivo de Braam Industries de la página 874 del ROSS.
 
-l
+En el siguiente enlace sacamos informacion para obetener los datos necesarios https://www.empresascopec.cl/wp-content/uploads/2022/04/Memoria-Anual-2021.pdf
