@@ -145,4 +145,76 @@ Grafico 4: Inversiones Banco Santander
 
 En conclusion las 3 acciones van a rentar a largo plazo pero creemos que la industria de energia especificamente Empresas Copec, es la accion que mas va a generar retornos. Además al otorgar 30% a las otras dos acciones se estaria diverificando el riesgo en caso de enfretar adversidades en Empresas Copes S.A.
 
-aa
+HITO 2
+
+### Aplicación Black-Scholes
+
+Se valoriza correctamente una opción de compra del activo principal definido en el Hito 1, utilizando el modelo de Black-Scholes continuo apoyándose de un código replicable que compute el modelo. Se apoya de literatura para complementar su valorización.
+
+```{python}
+#| echo: false
+import yfinance as yf
+import numpy as np
+from datetime import datetime as dt
+import datetime
+from scipy.stats import norm
+import math
+#importamos librerias necesarias
+#parametros
+#S:precio activo subyacente
+#K: strike
+#T: tiempo hasta la expiración
+#r: tasa libre de riesgo, se ocupo bono del tesoro de USA
+#sigma: volatilidad
+def black_scholes(option_type, S, K, T, r, sigma): #definimos la funcion con los parametros necesarios
+    d1 = (np.log(S / K) + (r + (sigma**2) / 2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T) #asigno los d1 y d2
+    if option_type == 'call': #lo hacemos para los dos tipos, call o put
+        option_price = S * norm.cdf(d1) - K * np.exp(-r * T) * norm.cdf(d2) #formula call
+    elif option_type == 'put':
+        option_price = K * np.exp(-r * T) * norm.cdf(-d2) - S * norm.cdf(-d1) # formula put
+    else:
+        option_price = None
+
+    return option_price
+# una vez obtenida la funcion necesitamos encontrar los parametros
+Valero_Energy_Corporation = "VLO" #sacado de Yahoofinance
+ticker = yf.Ticker("VLO")
+s = ticker.info["currentPrice"] #diccionario que nos entrega el precio del activo subyacente
+variable1 = yf.download("VLO", start = "2023-01-01", end ="2023-10-24")
+variable1["Returns"] = variable1["Adj Close"].pct_change()
+#sigma = variable1["Returns"][-1]
+sigma = variable1["Returns"].std() #nos otorga el sigma
+opcion = yf.Ticker("VLO231117P00130000") #17 noviembre 2023, put, codigo de la opcion
+k = opcion.info["strikePrice"] #strike
+expire_date = opcion.info["expireDate"]
+fecha = dt.utcfromtimestamp(expire_date)
+T = ((fecha-dt.now()).days)/365 #lo dividimos en 365 porque es anual
+bono = yf.download("^TNX", start="2023-01-01", end=dt.now(), interval = "1d")["Close"] #Resultados del bono de la tesorería
+rf = bono[-1]/100 #Se obtiene el rendimiento del bono mas reciente y se convierte a porcentaje (R).
+precio_final = black_scholes("put", s, k, T, rf, sigma)
+print(precio_final) 
+
+```
+
+### Modelo Adicional de valorizacion
+
+Se explica junto con descripcion matemática (fórmulas) correcta un modelo alternativo para valorizar la accion haciendo revisión de literatura cientifica con tal de hacer una referencia a un artículo del modelo.
+
+### Aplicacion modelo adicional
+
+Se aplica el modelo alternativo apoyandose de un código replicable que computa el modelo.
+
+### Análisis de contraste de ambos modelos
+
+Se realiza una comparación de los resultados de ambos modelos de valorización explicando sus similitudes y diferencias.
+
+### Reporte Grupal: Caso Administración
+
+Se eligen uno de los siguientes casos con tal de replicar y responder sus preguntas de acuerdo al activo principal elegido:
+
+-   Caso Administración de Capital de Trabajo de Keafer Manufacturing de la página 822 del ROSS.
+
+-   Caso Administración de Efectivo de Richmond Corporation de la página 845 del ROSS.
+
+-   Caso Administración de Efectivo de Braam Industries de la página 874 del ROSS.
