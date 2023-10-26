@@ -147,9 +147,13 @@ En conclusion las 3 acciones van a rentar a largo plazo pero creemos que la indu
 
 HITO 2
 
+En el presente colab se valora la opcion de compra del activo Valero Energy Corporation (VLO) que es una empresa que se asemeja al activo escogido para el hito 1, el cual es Empresas Copec S.A debido a que o se encontraron opciones para Copec.
+
+Esta opcion se valorizó utilizando dos modelos los cuales fueron Black Scholes continuo y el metodo de Montecarlo
+
 ### Aplicación Black-Scholes
 
-Se valoriza correctamente una opción de compra del activo principal definido en el Hito 1, utilizando el modelo de Black-Scholes continuo apoyándose de un código replicable que compute el modelo. Se apoya de literatura para complementar su valorización.
+Este modelo se ocupa para valorizar acciones tanto put como calls, donde a traves de un proceso matematico logra estimar el precio de estas. Para lograr esto este modelo necesita de algunos parametros los cuales son el precio del activo subyacente (S), strike (K), tiempo hasta la expiracion (T), tasa libre de riesgo (r) y la volatilidad (sigma).
 
 ```{python}
 #| echo: false
@@ -197,24 +201,68 @@ print(precio_final)
 
 ```
 
+Como se oberva el resultado de la valorizacion dio 2.77 aproximadamente el cual nos dice que en este momento a ese monto se podria vender en el mercado. En teoria alguien se puede beneficiar obteniendo el derecho de venta de esta accion al venderla al precio de ejercicio, siempre y cuando este sea mayor al precio del activo subyacente. Cabe destacar que esto puede ir cambiando en el futuro por lo que si se da esta condicion no implica que mañana tambien se siga dando.
+
+Cabe destacar que al momento de hacer este analisis el valor otorgaba 2.77, este puede variar un poco debido al paso de los dias
+
 ### Modelo Adicional de valorizacion
 
-Se explica junto con descripcion matemática (fórmulas) correcta un modelo alternativo para valorizar la accion haciendo revisión de literatura cientifica con tal de hacer una referencia a un artículo del modelo.
+El metodo de Montecarlo es un metodo de valorizacion de acciones el cual a diferencia del modelo Black Scholes, este genera escenarios aleatorios con un random del precio del activo subyasente (S) y calcula el valor de la opcion a traves del promedio de todos los escenarios simulados. Este metodo es bastante utilizado, ejemplo de este es el paper de Salazar y Peñaloza quienes intentan valorizar acciones pertenecientes al indice COLCAP, el cual es el simil del IPSA de Colombia.
+
+Link paper: [https://ciencia.lasalle.edu.co/finanzas_comercio/256/](https://colab.research.google.com/corgiredirector?site=https%3A%2F%2Fciencia.lasalle.edu.co%2Ffinanzas_comercio%2F256%2F)
 
 ### Aplicacion modelo adicional
 
-Se aplica el modelo alternativo apoyandose de un código replicable que computa el modelo.
+```{python}
+#| echo: false
+import numpy as np
+import yfinance as yf
+from datetime import datetime as dt
+import datetime
+from scipy.stats import norm
+import math
+#importamos numpy para hacer los calculos
+def monte_carlo_option_pricing(s, k, T, rf, sigma, num_simulations): #definimos montecarlo con sus parametros
+    z = np.random.standard_normal(num_simulations) #definimos valores aleatorios siguiendo una distribucion normnal
+    ST = s * np.exp((rf - 0.5 * sigma**2) * T + sigma * np.sqrt(T) * z)
+    option_prices = np.maximum(k - ST, 0) #calculamos el precio el precio de la opcion
+    option_price = np.exp(-rf * T) * np.mean(option_prices)
+    return option_price
+    #los parametros son casi los mismos que el metodo de arriba, donde se agrega el numero de simulaciones
+#ocupamos mismos datos que para Black Scholes
+Valero_Energy_Corporation = "VLO"
+ticker = yf.Ticker("VLO")
+s = ticker.info["currentPrice"]
+variable1 = yf.download("VLO", start = "2023-01-01", end ="2023-10-24")
+variable1["Returns"] = variable1["Adj Close"].pct_change()
+sigma = variable1["Returns"][-1]
+#sigma = variable1.std() ######################################## ver esto  ###################
+opcion = yf.Ticker("VLO231117P00130000") #fecha 17 noviembre 2023
+k = opcion.info["strikePrice"]
+expire_date = opcion.info["expireDate"]
+fecha = dt.utcfromtimestamp(expire_date)
+T = ((fecha-dt.now()).days)/365 #dividido en 365 porque es anual
+bono = yf.download("^TNX", start="2023-01-01", end=dt.now(), interval = "1d")["Close"]
+rf = bono[-1]/100
+num_simulations = 10000 #ocupamos 10 mil simulaciones, el cual es un bune nuemero, uno mas grande hace mas lento el proceso y no cambia en nada el resultado
+option_price = monte_carlo_option_pricing(s, k, T, rf, sigma, num_simulations)#llamamos a la funcion con los parametros
+print(option_price) 
+```
+
+Como se oberva el resultado de la valorizacion dio 2.77 aproximadamente el cual nos dice que en este momento a ese monto se podria vender en el mercado. En teoria alguien se puede beneficiar obteniendo el derecho de venta de esta accion al venderla al precio de ejercicio, siempre y cuando este sea mayor al precio del activo subyacente. Cabe destacar que esto puede ir cambiando en el futuro por lo que si se da esta condicion no implica que mañana tambien se siga dando.
+
+Cabe destacar que al momento de hacer este analisis el valor otorgaba 2.77, este puede variar un poco debido al paso de los dias
 
 ### Análisis de contraste de ambos modelos
 
-Se realiza una comparación de los resultados de ambos modelos de valorización explicando sus similitudes y diferencias.
+Estos dos metodos si bien logran valorizar una opcion, lo hacen de manera distinta teniendo algunas diferencias tales como que Black Scholes es más matematico que el de Montecarlo el cual es estocastico, donde se puede obserar en la linea 4 donde crea valores aleatorios para el precio del activo. Además Black Scholes hace supuestos de condiciones ideales de un mercado el cual no siemore se dan del todo en la realidad.
+
+Por otro lado estos tienen muchas similitudes tales como que las dos logran valorizar opciones put y call, llegando a resultados parecidos, lo que tambien se explica debido a que estos tienen los mismos parametros, donde solo cambia que el metodo de montecarlo se le deben indicar el numero de iteraciones y por ultimo ambos sirven para gestionar el riesgo de las empresas, debido a como se vio intentar calcular un valor teorico con el objetivo de armar mejores porafolios.
+
+Respecto al resultado ambos nos dieron 2.77 aproximadamente lo que tiene sentido debido a que los dos valorizan opciones junto con que ocupan parametros similares. Cabe destacar que estos resultados son teoricos por lo que no podemos tener 100% de certeza de que se lleguen a cumplir en un futuro.
 
 ### Reporte Grupal: Caso Administración
 
 Se eligen uno de los siguientes casos con tal de replicar y responder sus preguntas de acuerdo al activo principal elegido:
-
--   Caso Administración de Capital de Trabajo de Keafer Manufacturing de la página 822 del ROSS.
-
--   Caso Administración de Efectivo de Richmond Corporation de la página 845 del ROSS.
 
 -   Caso Administración de Efectivo de Braam Industries de la página 874 del ROSS.
