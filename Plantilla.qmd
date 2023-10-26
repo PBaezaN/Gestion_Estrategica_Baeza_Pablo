@@ -279,8 +279,18 @@ Respecto al resultado ambos nos dieron 2.77 aproximadamente lo que tiene sentido
 
 ### Reporte Grupal: Caso Administración
 
-Se eligen uno de los siguientes casos con tal de replicar y responder sus preguntas de acuerdo al activo principal elegido:
-
 -   Caso Administración de Efectivo de Braam Industries de la página 874 del ROSS.
 
-En el siguiente enlace sacamos informacion para obetener los datos necesarios https://www.empresascopec.cl/wp-content/uploads/2022/04/Memoria-Anual-2021.pdf
+    Activo elegido: Empresas Copec S.A.
+
+Para obtener la informacion necesaria se ocuparon los estados financieros de Empresas Copec S.A del año 2022.
+
+En el siguiente enlace sacamos informacion para obetener los datos necesarios https://www.empresascopec.cl/wp-content/uploads/2023/04/Memoria-Integrada-Empresas-Copec-2022.pdf
+
+![](photos/fotos/Captura de pantalla 2023-10-26 164050.png)
+
+¿Qué política de crédito debe adoptar la empresa?
+
+La empresa debe adoptar la opcion numero 1 debido a que es en la cual el VPN es el mas grande.
+
+Respecto a la opcion 3 esta no es factible de realizar debido a que los dias para cobrar son superiores a la opcion 1 y tiene un mayor costo administrativo. Si bien la tasa de incumplimiento es menor a la opcion 1 esta no logra afectar del todo a la hora de calcular el VPN. Es por esto que de todos modos la mejor opcion es la opcion 1.
